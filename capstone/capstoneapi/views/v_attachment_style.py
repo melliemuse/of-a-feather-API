@@ -3,7 +3,6 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-
 from capstoneapi.models import AttachmentStyle
 
 class AttachmentStyleSerializer(serializers.HyperlinkedModelSerializer):
@@ -32,7 +31,7 @@ class AttachmentStyles(ViewSet):
         try:
             attachment_style = AttachmentStyle.objects.get(pk=pk)
             serializer = AttachmentStyleSerializer(
-                attachment_style, context={'request', request})
+                attachment_style, context={'request': request})
             return Response(serializer.data)
         
         except Exception as ex:
@@ -47,7 +46,7 @@ class AttachmentStyles(ViewSet):
         """
         attachment_style = AttachmentStyle.objects.all()
         
-        serializer = AttachmentStyleSerializer(attachment_style, many=True, context={'request', request})
+        serializer = AttachmentStyleSerializer(attachment_style, many=True, context={'request': request})
 
         return Response(serializer.data)
 

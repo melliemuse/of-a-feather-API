@@ -21,8 +21,8 @@ class Dater(models.Model):
     been_reported = models.IntegerField(default=None, blank=True, null=True)
 
 
-    class Meta:
-        ordering = (F('user.date_joined').asc(nulls_last=True), )
+    # class Meta:
+    #     ordering = (F('user.date_joined').asc(nulls_last=True), )
 
     # def __str__ (self):
     #     return f'{self.first_name} {self.last_name}'

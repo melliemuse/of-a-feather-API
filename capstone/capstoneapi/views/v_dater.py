@@ -12,20 +12,21 @@ class DaterSerializer(serializers.HyperlinkedModelSerializer):
     Arguments:
         serializers.HyperlinkedModelSerializer
     """
+
     class Meta:
         model = Dater
         url = serializers.HyperlinkedIdentityField(
             view_name='dater',
             lookup_field='id',
         )
-        fields = ('id', 'user', 'attachment_style', 'location', 'bio',
+        fields = ('id', 'user_id', 'attachment_style', 'location', 'bio',
                   'gender', 'gender_preference', 'kids', 'smoker',
                   'looking_for', 'interests', 'profile_pic', 'age',
                   'age_range', 'tagline', 'been_reported')
 
-
 class Daters(ViewSet):
-    def retreive(self, request, pk=None):
+    
+    def retrieve(self, request, pk=None):
         """
         Handles single GET request for Dater
 
@@ -36,7 +37,7 @@ class Daters(ViewSet):
         try:
             dater = Dater.objects.get(pk=pk)
             serializer = DaterSerializer(
-                dater, context={'request', request})
+            dater, context={'request': request})
             return Response(serializer.data)
 
         except Exception as ex:
@@ -50,9 +51,10 @@ class Daters(ViewSet):
             Response -- JSON list of serialized Dater list
         """
         dater = Dater.objects.filter(id=request.auth.user.dater.id)
+        # dater = Dater.objects.all()
 
         serializer = DaterSerializer(
-            dater, many=True, context={'request', request})
+        dater, many=True, context={'request': request})
 
         return Response(serializer.data)
 
@@ -88,7 +90,7 @@ class Daters(ViewSet):
         
         dater.location = request.data["location"]
         dater.bio = request.data["bio"]
-        dater.attachment_style_id = request.data["attachment_style"]
+        dater.attachment_style_id = request.data["attachment_style_id"]
         dater.gender = request.data["gender"]
         dater.gender_preference = request.data["gender_preference"]
         dater.looking_for = request.data["looking_for"]

@@ -58,14 +58,13 @@ def register_user(request):
         last_name=req_body['last_name']
     )
     
-
     dater = Dater.objects.create(
-        attachment_style_id=req_body['attachment_style_id'], 
+        attachment_style_id=req_body['attachment_style_id'],
         location=req_body['location'], 
         bio=req_body['bio'],
-        gender=req_body['gender'], 
-        gender_preference=req_body['gender_preference'], 
-        kids=req_body['kids'], 
+        gender=req_body['gender'],
+        gender_preference=req_body['gender_preference'],
+        kids=req_body['kids'],
         smoker=req_body['smoker'],
         looking_for=req_body['looking_for'],
         interests=req_body['interests'],
