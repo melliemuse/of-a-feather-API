@@ -24,6 +24,8 @@ class DaterSerializer(serializers.HyperlinkedModelSerializer):
                   'looking_for', 'interests', 'profile_pic', 'age',
                   'age_range', 'tagline', 'been_reported')
 
+        # depth = 2
+
 class Daters(ViewSet):
     
     def retrieve(self, request, pk=None):
@@ -50,8 +52,9 @@ class Daters(ViewSet):
         Returns:
             Response -- JSON list of serialized Dater list
         """
+        
         dater = Dater.objects.filter(id=request.auth.user.dater.id)
-        # dater = Dater.objects.all()
+        
 
         serializer = DaterSerializer(
         dater, many=True, context={'request': request})

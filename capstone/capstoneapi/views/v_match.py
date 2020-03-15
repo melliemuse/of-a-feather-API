@@ -58,7 +58,13 @@ class Matches(ViewSet):
         try:
             Match.objects.get(pk=pk)
             Match.objects.delete()
-            return Response({}, serializer.data)
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        except Match.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
 
 
     def update(self, request, pk=None):
@@ -68,6 +74,16 @@ class Matches(ViewSet):
         Returns:
             Response -- Empty body with 204 status code
         """
+
+        match = Match.objects.get(pk=pk)
+        
+        match.dater_id = request.data["dater_id"]
+        match.matched_with_id = request.data["matched_with_id"]
+        match.match_status_id = request.data["match_status_id"]
+        match.dated_matched = request.data["date_matched"]
+
+        match.save()
+
 
     def create(self, request):
         """
