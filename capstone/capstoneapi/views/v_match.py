@@ -84,6 +84,7 @@ class Matches(ViewSet):
 
         match.save()
 
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     def create(self, request):
         """
@@ -92,3 +93,16 @@ class Matches(ViewSet):
         Returns:
             Response JSON serialized Match instance
         """
+
+        match = Match()
+
+        match.dater_id = request.data["dater_id"]
+        match.matched_with_id = request.data["matched_with_id"]
+        match.match_status_id = request.data["match_status_id"]
+        match.dated_matched = request.data["date_matched"]
+
+        match.save()
+
+        serializer=MatchSerializer(match, context={'request', request})
+
+        return Response(serializer.data)
