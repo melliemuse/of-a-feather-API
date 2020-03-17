@@ -19,12 +19,12 @@ class DaterSerializer(serializers.HyperlinkedModelSerializer):
             view_name='dater',
             lookup_field='id',
         )
-        fields = ('id', 'user_id', 'attachment_style_id', 'location', 'bio',
+        fields = ('id', 'user', 'attachment_style', 'attachment_style_id', 'location', 'bio',
                   'gender', 'gender_preference', 'kids', 'smoker',
                   'looking_for', 'interests', 'profile_pic', 'age',
                   'age_range', 'tagline', 'been_reported')
 
-        # depth = 2
+        depth = 3
 
 class Daters(ViewSet):
     
@@ -53,7 +53,14 @@ class Daters(ViewSet):
             Response -- JSON list of serialized Dater list
         """
         
-        dater = Dater.objects.filter(id=request.auth.user.dater.id)
+        attachment_style = self.request.query_params.get('attachment_style_id', None)
+
+        dater = Dater.objects.all()
+
+        if attachment_style is not None:
+            dater = dater.filter(attachment_style__id=attachment_style)
+        else:
+            dater = Dater.objects.filter(id=request.auth.user.dater.id)
         
 
         serializer = DaterSerializer(

@@ -1,0 +1,25 @@
+[
+    {
+    "model": "myapp.dater",
+    "pk": 1,
+    "fields": {
+      "location": "Nashville",
+      "bio": "A self made man with a zest for life and a heart of gold",
+      "gender": "male",
+      "gender_preference": "female",
+      "kids": 0,
+      "smoker": 0,
+      "looking_for": "relationship",
+      "interests": "fire eating, pour painting, one handed cartwheels, travel",
+      "profile_pic": "c:/itMe.jpg"
+    }
+  },
+  {
+    "model": "myapp.dater",
+    "pk": 2,
+    "fields": {
+      "first_name": "Paul",
+      "last_name": "McCartney"
+    }
+  }
+]

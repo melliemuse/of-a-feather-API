@@ -5,3 +5,4 @@ from .v_matchstatus import MatchStatuses
 from .v_message import Messages
 from .v_register import register_user
 from .v_register import login_user
+from .v_user import Users

@@ -75,6 +75,7 @@ def register_user(request):
         been_reported=req_body['been_reported'],
         user=new_user
     )
+   
 
     # Commit the user to the database by saving it
     dater.save()
