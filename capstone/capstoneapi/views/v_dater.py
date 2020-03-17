@@ -19,7 +19,7 @@ class DaterSerializer(serializers.HyperlinkedModelSerializer):
             view_name='dater',
             lookup_field='id',
         )
-        fields = ('id', 'user_id', 'attachment_style', 'location', 'bio',
+        fields = ('id', 'user_id', 'attachment_style_id', 'location', 'bio',
                   'gender', 'gender_preference', 'kids', 'smoker',
                   'looking_for', 'interests', 'profile_pic', 'age',
                   'age_range', 'tagline', 'been_reported')

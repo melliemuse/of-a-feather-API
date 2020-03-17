@@ -16,7 +16,7 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
             view_name='match',
             lookup_field='id',
         )
-        fields = ('id', 'dater', 'matched_with', 'match_status', 'date_matched')
+        fields = ('id', 'dater', 'matched_with', 'match_status_id', 'date_matched')
 
 class Matches(ViewSet):
     def retrieve(self, request, pk=None):
