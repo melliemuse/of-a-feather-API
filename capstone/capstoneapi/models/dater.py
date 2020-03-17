@@ -5,7 +5,7 @@ from .attachment_style import AttachmentStyle
 
 class Dater(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    attachment_style = models.ForeignKey(AttachmentStyle, on_delete=models.SET_NULL, default=None, blank=True, null=True)
+    attachment_style = models.ForeignKey(AttachmentStyle, on_delete=models.CASCADE, default=None, blank=True, null=True)
     location = models.CharField(max_length=50)
     bio = models.TextField()
     gender = models.CharField(max_length=25)
