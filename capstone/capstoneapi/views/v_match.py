@@ -16,7 +16,8 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
             view_name='match',
             lookup_field='id',
         )
-        fields = ('id', 'dater', 'matched_with', 'match_status_id', 'date_matched')
+        fields = ('id', 'dater_id', 'dater', 'matched_with_id', 'matched_with', 'match_status_id', 'match_status', 'date_matched')
+        depth = 2
 
 class Matches(ViewSet):
     def retrieve(self, request, pk=None):
@@ -42,8 +43,17 @@ class Matches(ViewSet):
         Returns:
             Response -- JSON serialized Match list
         """
+        matched_with = self.request.query_params.get('matched_with_id', None)
+        dater = self.request.query_params.get('dater_id', None)
 
-        match = Match.objects.all()
+        # if attachment_style is not None:
+        #     dater = dater.filter(attachment_style__id=attachment_style).exclude(id=request.auth.user.dater.id)
+        # else:
+        #     dater = Dater.objects.filter(id=request.auth.user.dater.id)
+        if matched_with is not None and dater is not None:
+            match = Match.objects.filter(matched_with_id=matched_with, dater_id=dater) | Match.objects.filter(matched_with_id=dater, dater_id=matched_with)
+        else: 
+            match = Match.objects.all()
         serializer = MatchSerializer(match, many=True, context={'request': request})
         return Response(serializer.data)
 
@@ -80,7 +90,6 @@ class Matches(ViewSet):
         match.dater_id = request.data["dater_id"]
         match.matched_with_id = request.data["matched_with_id"]
         match.match_status_id = request.data["match_status_id"]
-        match.dated_matched = request.data["date_matched"]
 
         match.save()
 
@@ -99,10 +108,9 @@ class Matches(ViewSet):
         match.dater_id = request.data["dater_id"]
         match.matched_with_id = request.data["matched_with_id"]
         match.match_status_id = request.data["match_status_id"]
-        match.dated_matched = request.data["date_matched"]
 
         match.save()
 
-        serializer=MatchSerializer(match, context={'request', request})
+        serializer=MatchSerializer(match, context={'request': request})
 
         return Response(serializer.data)

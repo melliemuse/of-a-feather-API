@@ -5,7 +5,7 @@ from rest_framework import serializers, status
 from capstoneapi.models import MatchStatus
 
 class MatchStatusSerializer(serializers.HyperlinkedModelSerializer):
-    """ JSON serializer for status
+    """ JSON serializer for matchstatus
 
     Arguments:
         serializers.HyperlinkedModelSerializer
@@ -13,7 +13,7 @@ class MatchStatusSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = MatchStatus
         url = serializers.HyperlinkedIdentityField(
-            view_name='status',
+            view_name='matchstatus',
             lookup_field='id',
         )
         fields = ('id', 'status_type')
@@ -21,10 +21,10 @@ class MatchStatusSerializer(serializers.HyperlinkedModelSerializer):
 class MatchStatuses(ViewSet):
     def retrieve(self, request, pk=None):
         """
-        Handles single GET request for Status
+        Handles single GET request for MatchStatus
         
         Returns:
-            Response -- JSON serialized Status Instance
+            Response -- JSON serialized Matchstatus Instance
         """
 
         try:

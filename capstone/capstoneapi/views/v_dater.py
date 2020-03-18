@@ -54,11 +54,12 @@ class Daters(ViewSet):
         """
         
         attachment_style = self.request.query_params.get('attachment_style_id', None)
+        
 
         dater = Dater.objects.all()
 
         if attachment_style is not None:
-            dater = dater.filter(attachment_style__id=attachment_style)
+            dater = dater.filter(attachment_style__id=attachment_style).exclude(id=request.auth.user.dater.id)
         else:
             dater = Dater.objects.filter(id=request.auth.user.dater.id)
         
