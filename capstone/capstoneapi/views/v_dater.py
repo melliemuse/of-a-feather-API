@@ -56,30 +56,75 @@ class Daters(ViewSet):
         """
         
         attachment_style = self.request.query_params.get('attachment_style_id', None)
-        # match_status = self.request.query_params.get('match_status_id', None)
+        current_dater_only = request.query_params.get('self', False)
+        # open_order = request.query_params.get('open', False)
+
+        # if open_order == 'true':
+        #   orders = orders.filter(payment_type__id=None)
         
-
-        dater = Dater.objects.all()
-        # match = Match.objects.all().exclude(match_status_id=3)
-
         # dater.match_set (if no related-name)
 
-        dater_id = request.auth.user.dater.id
+        dater = Dater.objects.all()
+
+
+        
 
         if attachment_style is not None:
-            dater = Dater.objects.raw (
-                (
-                '''
-                SELECT * FROM capstoneapi_dater d
-                LEFT OUTER JOIN capstoneapi_match m 
-                ON d.id = m.dater_id 
-                AND m.match_status_id != 3 
-                AND m.match_status_id != 2 
-                AND m.dater_id != 26
-                WHERE d.attachment_style_id == 1'''
-                ))
-            
-            
+            dater_id = request.auth.user.dater.id
+            if attachment_style == '1':
+                print(dater_id)
+                dater = Dater.objects.raw(
+                    '''
+                    SELECT * FROM 
+                    capstoneapi_dater d
+                    LEFT OUTER JOIN capstoneapi_match m
+                    on d.id = m.matched_with_id or d.id = m.dater_id
+                    WHERE d.id NOT IN (SELECT m.matched_with_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
+                    on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.dater_id == %s) 
+                    AND d.id NOT IN (SELECT m.matched_with_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
+                    on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.match_status_id == 1 AND m.dater_id == %s)
+                    AND d.id NOT IN (SELECT m.dater_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
+                    on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.match_status_id == 3 AND m.matched_with_id == %s)
+                    AND d.id != %s
+                    GROUP BY d.id 
+                    ''', [dater_id, dater_id, dater_id, dater_id]
+                    )
+
+                # dater = Dater.objects.raw(
+                #     '''
+                #     SELECT * FROM capstoneapi_dater d
+                #     LEFT OUTER JOIN capstoneapi_match m
+                #     ON d.id = m.dater_id
+                #     AND m.match_status_id != 3
+                #     AND m.match_status_id != 2
+                #     AND m.dater_id != %s ''', [dater_id]
+                #     )
+                    
+            else:
+                dater = Dater.objects.raw(
+                    '''
+                    SELECT * FROM 
+                    capstoneapi_dater d
+                    LEFT OUTER JOIN capstoneapi_match m
+                    on d.id = m.matched_with_id or d.id = m.dater_id
+                    WHERE d.id NOT IN (SELECT m.matched_with_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
+                    on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.dater_id == %s) 
+                    AND d.id NOT IN (SELECT m.matched_with_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
+                    on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.match_status_id == 1 AND m.dater_id == %s)
+                    AND d.id NOT IN (SELECT m.dater_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
+                    on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.match_status_id == 3 AND m.matched_with_id == %s)
+                    AND d.id != %s AND d.attachment_style_id = %s
+                    GROUP BY d.id
+                    ''', [dater_id, dater_id, dater_id, dater_id, 1]
+                # '''
+                # SELECT * FROM capstoneapi_dater d
+                # LEFT OUTER JOIN capstoneapi_match m
+                # ON d.id = m.dater_id
+                # AND m.match_status_id != 3
+                # AND m.match_status_id != 2
+                # AND m.dater_id != %s
+                # WHERE d.attachment_style_id == %s ''', [dater_id, '1']
+                )
 
         else:
             dater = Dater.objects.filter(id=request.auth.user.dater.id)
