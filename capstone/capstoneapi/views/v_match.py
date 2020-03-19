@@ -16,7 +16,7 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
             view_name='match',
             lookup_field='id',
         )
-        fields = ('id', 'dater_id', 'dater', 'matched_with_id', 'matched_with', 'match_status_id', 'match_status', 'date_matched')
+        fields = ('id', 'dater_id', 'dater', 'matched_with_id', 'matched_with', 'match_status_id', 'date_matched')
         depth = 2
 
 class Matches(ViewSet):
@@ -45,15 +45,16 @@ class Matches(ViewSet):
         """
         matched_with = self.request.query_params.get('matched_with_id', None)
         dater = self.request.query_params.get('dater_id', None)
+        match_status = self.request.query_params.get('match_status_id', None)
 
-        # if attachment_style is not None:
-        #     dater = dater.filter(attachment_style__id=attachment_style).exclude(id=request.auth.user.dater.id)
-        # else:
-        #     dater = Dater.objects.filter(id=request.auth.user.dater.id)
+        
         if matched_with is not None and dater is not None:
             match = Match.objects.filter(matched_with_id=matched_with, dater_id=dater) | Match.objects.filter(matched_with_id=dater, dater_id=matched_with)
+        if match_status is not None:
+            match = Match.objects.filter(match_status_id=match_status)
         else: 
-            match = Match.objects.all()
+            match = Match.objects.all().exclude(match_status_id=3)
+
         serializer = MatchSerializer(match, many=True, context={'request': request})
         return Response(serializer.data)
 

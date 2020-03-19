@@ -1,9 +1,11 @@
 from django.http import HttpResponseServerError
+# from django.db import connection
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from capstoneapi.models import Dater
+from capstoneapi.models import Dater, Match
+from capstoneapi.views.v_match import MatchSerializer
 
 
 class DaterSerializer(serializers.HyperlinkedModelSerializer):
@@ -22,7 +24,7 @@ class DaterSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'user', 'attachment_style', 'attachment_style_id', 'location', 'bio',
                   'gender', 'gender_preference', 'kids', 'smoker',
                   'looking_for', 'interests', 'profile_pic', 'age',
-                  'age_range', 'tagline', 'been_reported')
+                  'age_range', 'tagline', 'been_reported', 'matching_daters', 'matched_with_daters')
 
         depth = 3
 
@@ -54,14 +56,42 @@ class Daters(ViewSet):
         """
         
         attachment_style = self.request.query_params.get('attachment_style_id', None)
+        # match_status = self.request.query_params.get('match_status_id', None)
         
 
         dater = Dater.objects.all()
+        # match = Match.objects.all().exclude(match_status_id=3)
+
+        # dater.match_set (if no related-name)
+
+        dater_id = request.auth.user.dater.id
 
         if attachment_style is not None:
-            dater = dater.filter(attachment_style__id=attachment_style).exclude(id=request.auth.user.dater.id)
+            dater = Dater.objects.raw (
+                (
+                '''
+                SELECT * FROM capstoneapi_dater d
+                LEFT OUTER JOIN capstoneapi_match m 
+                ON d.id = m.dater_id 
+                AND m.match_status_id != 3 
+                AND m.match_status_id != 2 
+                AND m.dater_id != 1
+                WHERE d.attachment_style_id == 1'''
+                ))
+            
+            
+
         else:
             dater = Dater.objects.filter(id=request.auth.user.dater.id)
+                
+               
+            
+            # dater = dater.filter(attachment_style__id=attachment_style).exclude(id=request.auth.user.dater.id)
+            # dater = dater.match_set.exclude(matched_with_daters__match_status=3)
+            # dater = dater.exclude(matching_daters__dater_id=request.auth.user.dater.id)
+            # matches = dater.exclude(match_status_daters=3)
+
+            # matches = dater.matching_daters.exclude(dater_id=request.auth.user.dater.id)
         
 
         serializer = DaterSerializer(
