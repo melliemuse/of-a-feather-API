@@ -75,7 +75,7 @@ class Daters(ViewSet):
                 ON d.id = m.dater_id 
                 AND m.match_status_id != 3 
                 AND m.match_status_id != 2 
-                AND m.dater_id != 1
+                AND m.dater_id != 26
                 WHERE d.attachment_style_id == 1'''
                 ))
             

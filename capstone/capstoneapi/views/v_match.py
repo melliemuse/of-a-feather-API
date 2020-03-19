@@ -50,7 +50,7 @@ class Matches(ViewSet):
         
         if matched_with is not None and dater is not None:
             match = Match.objects.filter(matched_with_id=matched_with, dater_id=dater) | Match.objects.filter(matched_with_id=dater, dater_id=matched_with)
-        if match_status is not None:
+        elif match_status is not None:
             match = Match.objects.filter(match_status_id=match_status)
         else: 
             match = Match.objects.all().exclude(match_status_id=3)
