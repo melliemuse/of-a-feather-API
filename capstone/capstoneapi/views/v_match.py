@@ -57,8 +57,9 @@ class Matches(ViewSet):
         # GROUP BY m.id
 
         # http://localhost:8000/matches?match_status_id=2&dater_id=26
-        if match_status is not None and dater is not None:
-            match = Match.objects.filter(match_status_id=match_status, dater__id=dater) | Match.objects.filter(match_status_id=match_status, matched_with__id=dater)
+        if match_status is not None:
+            current_dater = request.auth.user.dater.id
+            match = Match.objects.filter(match_status_id=match_status, dater__id=current_dater) | Match.objects.filter(match_status_id=match_status, matched_with__id=current_dater)
         else: 
             match = Match.objects.all().exclude(match_status_id=3)
 
