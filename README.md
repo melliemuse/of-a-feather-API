@@ -4,7 +4,7 @@ Of a Feather is a dating app designed to maximize compatibility and improve the 
 ## Steps to Install this App
 
 1. Clone this repo onto your computer
-- ` git clone git@github.com:melliemuse/of-a-feather-react.git `
+- ` git clone git@github.com:melliemuse/of-a-feather-API.git `
 
 2. Create Virtual Environment
 - ` cd of-a-feather-API `
@@ -28,7 +28,7 @@ Of a Feather is a dating app designed to maximize compatibility and improve the 
 - ` python manage.py createsuperuser `
 
 7. Load data from fixtures into your database
-- ` python manage.py loaddata fixtures/fixtures.json `
+- ` python manage.py loaddata fixtures/fixtures.json`
 
 8. Run Server 
 - ` python manage.py runserver `
