@@ -21,14 +21,14 @@ Of a Feather is a dating app designed to maximize compatibility and improve the 
 - ` pip install -r requirements.txt `
 
 5. Build Database from Models 
-- ` python manage.py makemigrations `
+- ` python manage.py makemigrations capstoneapi `
 - ` python manage.py migrate `
 
 6. Create a Superuser 
 - ` python manage.py createsuperuser `
 
 7. Load data from fixtures into your database
-- ` python manage.py loaddata `
+- ` python manage.py loaddata fixtures/fixtures.json `
 
 8. Run Server 
 - ` python manage.py runserver `
