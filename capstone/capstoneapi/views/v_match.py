@@ -56,7 +56,7 @@ class Matches(ViewSet):
         # OR m.matched_with_id == 26
         # GROUP BY m.id
 
-        # http://localhost:8000/matches?match_status_id=2&dater_id=26
+        # http://localhost:8000/matches?match_status_id=2
         if match_status is not None:
             current_dater = request.auth.user.dater.id
             match = Match.objects.filter(match_status_id=match_status, dater__id=current_dater) | Match.objects.filter(match_status_id=match_status, matched_with__id=current_dater)
@@ -103,6 +103,24 @@ class Matches(ViewSet):
         match.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+    
+    def patch(self, request, pk=None):
+        
+        
+
+        try:
+            match = Match.objects.get(pk=pk)
+            match.match_status_id = request.data["match_status_id"]
+            match.save()
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        except Match.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+
 
     def create(self, request):
         """
