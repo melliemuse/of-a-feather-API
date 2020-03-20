@@ -47,11 +47,19 @@ class Matches(ViewSet):
         dater = self.request.query_params.get('dater_id', None)
         match_status = self.request.query_params.get('match_status_id', None)
 
-        
-        if matched_with is not None and dater is not None:
-            match = Match.objects.filter(matched_with_id=matched_with, dater_id=dater) | Match.objects.filter(matched_with_id=dater, dater_id=matched_with)
-        elif match_status is not None:
-            match = Match.objects.filter(match_status_id=match_status)
+
+        # SELECT * FROM capstoneapi_match m 
+        # JOIN capstoneapi_dater d
+        # on d.id = m.matched_with_id or d.id = m.dater_id 
+        # WHERE m.match_status_id == 2 
+        # AND m.dater_id == 26 
+        # OR m.matched_with_id == 26
+        # GROUP BY m.id
+
+        # http://localhost:8000/matches?match_status_id=2&dater_id=26
+        if match_status is not None:
+            current_dater = request.auth.user.dater.id
+            match = Match.objects.filter(match_status_id=match_status, dater__id=current_dater) | Match.objects.filter(match_status_id=match_status, matched_with__id=current_dater)
         else: 
             match = Match.objects.all().exclude(match_status_id=3)
 

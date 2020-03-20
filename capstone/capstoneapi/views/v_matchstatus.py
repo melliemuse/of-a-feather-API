@@ -44,6 +44,7 @@ class MatchStatuses(ViewSet):
         """
 
         match_status = MatchStatus.objects.all()
+
         serializer = MatchStatusSerializer(match_status, many=True, context={'request': request})
         return Response(serializer.data)
 
