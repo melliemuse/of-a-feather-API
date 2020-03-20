@@ -3,32 +3,36 @@ Of a Feather is a dating app designed to maximize compatibility and improve the 
 
 ## Steps to Install this App
 
-Clone this repo onto your computer
+1. Clone this repo onto your computer
 - ` git clone git@github.com:melliemuse/of-a-feather-react.git `
 
-Create Virtual Environment
+2. Create Virtual Environment
 - ` cd of-a-feather-API `
 - ` python -m venv OfAFeatherEnv `
 
-Activate Virtual Environment
+3. Activate Virtual Environment
  For Mac: 
 - ` source ./OfAFeatherEnv/bin/activate `
 
  For Windows:
 - ` source ./OfAFeatherEnv/Scripts/activate `
 
-Install Dependencies
+4. Install Dependencies
 - ` pip install -r requirements.txt `
 
-Build Database from Models 
+5. Build Database from Models 
 - ` python manage.py makemigrations `
 - ` python manage.py migrate `
 
-Create a Superuser 
+6. Create a Superuser 
 - ` python manage.py createsuperuser `
 
-Load data from fixtures into your database
+7. Load data from fixtures into your database
 - ` python manage.py loaddata `
 
-Run Server 
+8. Run Server 
 - ` python manage.py runserver `
+
+9. Front End Dependencies
+- Make Sure You Visit the Front End Repo and follow install instructions 
+- https://github.com/melliemuse/of-a-feather-react
