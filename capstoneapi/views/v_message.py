@@ -77,7 +77,6 @@ class Messages(ViewSet):
         message = Message.objects.get(pk=pk)
 
         message.message_body = request.data["message_body"]
-        message.time_sent = request.data["time_sent"]
         message.logged_in_user_id = request.data["logged_in_user_id"]
         message.match_id = request.data["match_id"]
 
@@ -93,14 +92,15 @@ class Messages(ViewSet):
             Response JSON serialized Message instance
         """
 
-        message = Message.objects.get(pk=pk)
+        current_user = request.auth.user.dater.id
+
+        message = Message()
+
         message.message_body = request.data["message_body"]
-        message.time_sent = request.data["time_sent"]
-        message.logged_in_user_id = request.data["logged_in_user_id"]
+        message.logged_in_user_id = current_user
         message.match_id = request.data["match_id"]
 
         message.save()
-
         serializer=MessageSerializer(message, context={'request', request})
 
         return Response(serializer.data)

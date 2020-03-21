@@ -43,7 +43,7 @@ class Matches(ViewSet):
         Returns:
             Response -- JSON serialized Match list
         """
-        matched_with = self.request.query_params.get('matched_with_id', None)
+        dater2 = self.request.query_params.get('matched_with_id', None)
         dater = self.request.query_params.get('dater_id', None)
         match_status = self.request.query_params.get('match_status_id', None)
 
@@ -57,9 +57,13 @@ class Matches(ViewSet):
         # GROUP BY m.id
 
         # http://localhost:8000/matches?match_status_id=2
+        current_dater = request.auth.user.dater.id
+
         if match_status is not None:
-            current_dater = request.auth.user.dater.id
             match = Match.objects.filter(match_status_id=match_status, dater__id=current_dater) | Match.objects.filter(match_status_id=match_status, matched_with__id=current_dater)
+        elif dater2 is not None:
+            match = Match.objects.filter(match_status=1, matched_with_id=current_dater, dater_id=dater2)
+
         else: 
             match = Match.objects.all().exclude(match_status_id=3)
 
