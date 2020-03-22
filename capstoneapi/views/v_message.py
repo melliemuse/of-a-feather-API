@@ -109,6 +109,6 @@ class Messages(ViewSet):
         message.match_id = request.data["match_id"]
 
         message.save()
-        serializer=MessageSerializer(message, context={'request', request})
+        serializer=MessageSerializer(message, context={'request': request})
 
         return Response(serializer.data)
