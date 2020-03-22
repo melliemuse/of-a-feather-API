@@ -16,7 +16,8 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
             view_name='message',
             lookup_field='id',
         )
-        fields = ('id', 'message_body', 'time_sent', 'logged_in_user_id', 'match_id')
+        fields = ('id', 'message_body', 'time_sent', 'logged_in_user_id', 'match_id', 'match')
+        depth = 2
 
 class Messages(ViewSet):
     def retrieve(self, request, pk=None):
@@ -43,7 +44,14 @@ class Messages(ViewSet):
             Response -- JSON serialized Message list
         """
 
+        match = self.request.query_params.get('match_id', None)
+        
         message = Message.objects.all()
+
+        if match is not None:
+            message = message.filter(match__id=match)
+
+
         serializer = MessageSerializer(message, many=True, context={'request': request})
         return Response(serializer.data)
 
