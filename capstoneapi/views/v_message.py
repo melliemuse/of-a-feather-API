@@ -62,10 +62,10 @@ class Messages(ViewSet):
         Returns:
             Response -- JSON serialized detail of deleted Message
         """
-
+        
         try:
-            Message.objects.get(pk=pk)
-            Message.objects.delete()
+            message = Message.objects.get(pk=pk)
+            message.delete()
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
         except Message.DoesNotExist as ex:
@@ -90,6 +90,22 @@ class Messages(ViewSet):
 
         message.save()
 
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+    def patch(self, request, pk=None):
+        """
+        Handles PUT requests for individual Message item
+
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+
+        message = Message.objects.get(pk=pk)
+        message.message_body = request.data["message_body"]
+
+        message.save()
+
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     def create(self, request):
@@ -109,6 +125,6 @@ class Messages(ViewSet):
         message.match_id = request.data["match_id"]
 
         message.save()
-        serializer=MessageSerializer(message, context={'request', request})
+        serializer=MessageSerializer(message, context={'request': request})
 
         return Response(serializer.data)
