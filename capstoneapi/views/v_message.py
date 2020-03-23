@@ -90,6 +90,22 @@ class Messages(ViewSet):
 
         message.save()
 
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+    def patch(self, request, pk=None):
+        """
+        Handles PUT requests for individual Message item
+
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+
+        message = Message.objects.get(pk=pk)
+        message.message_body = request.data["message_body"]
+
+        message.save()
+
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     def create(self, request):
