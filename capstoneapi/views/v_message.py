@@ -62,10 +62,10 @@ class Messages(ViewSet):
         Returns:
             Response -- JSON serialized detail of deleted Message
         """
-
+        
         try:
-            Message.objects.get(pk=pk)
-            Message.objects.delete()
+            message = Message.objects.get(pk=pk)
+            message.delete()
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
         except Message.DoesNotExist as ex:
