@@ -6,6 +6,8 @@ from rest_framework import serializers
 from rest_framework import status
 from capstoneapi.models import Dater, Match
 from capstoneapi.views.v_match import MatchSerializer
+from django.contrib.auth.models import User
+
 
 
 class DaterSerializer(serializers.HyperlinkedModelSerializer):
@@ -212,6 +214,15 @@ class Daters(ViewSet):
         dater.been_reported = request.data["been_reported"]
 
         dater.save()
+
+        user = User.objects.get(pk=dater.user.id)
+        user.username = request.data["username"]
+        user.first_name = request.data["first_name"]
+        user.last_name = request.data["last_name"]
+        user.email = request.data["email"]
+        user.password = request.data["password"]
+
+        user.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 

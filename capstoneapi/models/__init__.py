@@ -3,3 +3,4 @@ from .dater import Dater
 from .matchstatus import MatchStatus
 from .match import Match 
 from .message import Message
+from django.contrib.auth.models import User
