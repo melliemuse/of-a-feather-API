@@ -56,6 +56,7 @@ class Daters(ViewSet):
         """
         
         attachment_style = self.request.query_params.get('attachment_style_id', None)
+        gender_preference = self.request.query_params.get('gender_preference', None)
         age_range = self.request.query_params.get('age_range', None)
         current_dater_only = request.query_params.get('self', False)
         # open_order = request.query_params.get('open', False)
@@ -68,15 +69,31 @@ class Daters(ViewSet):
         dater = Dater.objects.all()
 
 
-        
-
         if attachment_style is not None:
             age_range_1 = age_range.split('-')[0]
             age_range_2 = age_range.split('-')[1]
             print(age_range_1)
+            print(gender_preference)
             dater_id = request.auth.user.dater.id
-            if attachment_style == '1':
-                print(dater_id)
+            
+            if attachment_style == '1' and gender_preference != 'all':
+                dater = Dater.objects.raw(
+                    '''
+                    SELECT * FROM
+                    capstoneapi_dater d
+                    LEFT OUTER JOIN capstoneapi_match m
+                    on d.id = m.matched_with_id or d.id = m.dater_id
+                    WHERE d.id NOT IN (SELECT m.matched_with_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
+                    on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.dater_id == %s) 
+                    AND d.id NOT IN (SELECT m.matched_with_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
+                    on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.match_status_id == 1 AND m.dater_id == %s)
+                    AND d.id NOT IN (SELECT m.dater_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
+                    on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.match_status_id == 3 AND m.matched_with_id == %s)
+                    AND d.id != %s AND d.age BETWEEN %s and %s AND d.gender == %s
+                    GROUP BY d.id 
+                    ''', [dater_id, dater_id, dater_id, dater_id, age_range_1, age_range_2, gender_preference]
+                    )
+            elif attachment_style == '1' and gender_preference == 'all':
                 dater = Dater.objects.raw(
                     '''
                     SELECT * FROM 
@@ -89,22 +106,13 @@ class Daters(ViewSet):
                     on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.match_status_id == 1 AND m.dater_id == %s)
                     AND d.id NOT IN (SELECT m.dater_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
                     on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.match_status_id == 3 AND m.matched_with_id == %s)
-                    AND d.id != %s AND d.age BETWEEN %s and %s
+                    AND d.id != %s AND d.age BETWEEN %s and %s 
                     GROUP BY d.id 
                     ''', [dater_id, dater_id, dater_id, dater_id, age_range_1, age_range_2]
                     )
 
-                # dater = Dater.objects.raw(
-                #     '''
-                #     SELECT * FROM capstoneapi_dater d
-                #     LEFT OUTER JOIN capstoneapi_match m
-                #     ON d.id = m.dater_id
-                #     AND m.match_status_id != 3
-                #     AND m.match_status_id != 2
-                #     AND m.dater_id != %s ''', [dater_id]
-                #     )
                     
-            else:
+            elif attachment_style != '1' and gender_preference == 'all':
                 dater = Dater.objects.raw(
                     '''
                     SELECT * FROM 
@@ -120,14 +128,24 @@ class Daters(ViewSet):
                     AND d.id != %s AND d.attachment_style_id = %s AND d.age BETWEEN %s and %s
                     GROUP BY d.id
                     ''', [dater_id, dater_id, dater_id, dater_id, 1, age_range_1, age_range_2]
-                # '''
-                # SELECT * FROM capstoneapi_dater d
-                # LEFT OUTER JOIN capstoneapi_match m
-                # ON d.id = m.dater_id
-                # AND m.match_status_id != 3
-                # AND m.match_status_id != 2
-                # AND m.dater_id != %s
-                # WHERE d.attachment_style_id == %s ''', [dater_id, '1']
+                )
+
+            elif attachment_style != '1' and gender_preference != 'all':
+                dater = Dater.objects.raw(
+                    '''
+                    SELECT * FROM 
+                    capstoneapi_dater d
+                    LEFT OUTER JOIN capstoneapi_match m
+                    on d.id = m.matched_with_id or d.id = m.dater_id
+                    WHERE d.id NOT IN (SELECT m.matched_with_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
+                    on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.dater_id == %s) 
+                    AND d.id NOT IN (SELECT m.matched_with_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
+                    on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.match_status_id == 1 AND m.dater_id == %s)
+                    AND d.id NOT IN (SELECT m.dater_id FROM capstoneapi_match m LEFT OUTER JOIN capstoneapi_dater d
+                    on d.id = m.matched_with_id or d.id = m.dater_id WHERE m.match_status_id == 3 AND m.matched_with_id == %s)
+                    AND d.id != %s AND d.attachment_style_id = %s AND d.age BETWEEN %s and %s  AND d.gender == %s
+                    GROUP BY d.id
+                    ''', [dater_id, dater_id, dater_id, dater_id, 1, age_range_1, age_range_2, gender_preference]
                 )
 
         else:
