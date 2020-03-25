@@ -17,7 +17,7 @@ class AttachmentStyleSerializer(serializers.HyperlinkedModelSerializer):
             view_name='attachmentstyle',
             lookup_field='id',
         )
-        fields = ('id', 'name', 'description')
+        fields = ('id', 'name', 'description', 'url')
 
 class AttachmentStyles(ViewSet):
     def retrieve(self, request, pk=None):

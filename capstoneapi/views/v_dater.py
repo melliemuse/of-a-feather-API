@@ -26,7 +26,7 @@ class DaterSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'user', 'attachment_style', 'attachment_style_id', 'location', 'bio',
                   'gender', 'gender_preference', 'kids', 'smoker',
                   'looking_for', 'interests', 'profile_pic', 'age',
-                  'age_range', 'tagline', 'been_reported', 'matching_daters', 'matched_with_daters')
+                  'age_range', 'tagline', 'been_reported', 'matching_daters', 'matched_with_daters', 'url')
 
         depth = 3
 
