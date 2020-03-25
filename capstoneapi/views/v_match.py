@@ -2,6 +2,7 @@ from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
+# from capstoneapi.views.v_dater 
 from capstoneapi.models import Match
 
 class MatchSerializer(serializers.HyperlinkedModelSerializer):
@@ -16,7 +17,7 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
             view_name='match',
             lookup_field='id',
         )
-        fields = ('id', 'dater_id', 'dater', 'matched_with_id', 'matched_with', 'match_status_id', 'date_matched')
+        fields = ('id', 'dater_id', 'dater', 'matched_with_id', 'matched_with', 'match_status_id', 'date_matched',  'url')
         depth = 2
 
 class Matches(ViewSet):

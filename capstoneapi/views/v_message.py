@@ -2,7 +2,59 @@ from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from capstoneapi.models import Message
+# from capstoneapi.views.v_match import MatchSerializer
+from capstoneapi.models import Message, Match, Dater
+from django.contrib.auth.models import User
+
+class CustomUserSerializer(serializers.HyperlinkedModelSerializer):
+    """JSON serializer for dater
+
+    Arguments: 
+        serializers.HyperlinkedModelSerializer
+    """
+
+    class Meta:
+        model = User
+        url = serializers.HyperlinkedIdentityField(
+            view_name='user',
+            lookup_field='id'
+        )
+    
+        fields = ('id', 'first_name')
+
+class CustomDaterSerializer(serializers.HyperlinkedModelSerializer):
+    """ JSON serializer for dater
+
+    Arguments:
+        serializers.HyperlinkedModelSerializer
+    """
+    user = CustomUserSerializer()
+    class Meta:
+        model = Dater
+        url = serializers.HyperlinkedIdentityField(
+            view_name='dater',
+            lookup_field='id',
+        )
+        fields = ('id', 'user', 'url', 'profile_pic')
+        depth = 2
+
+
+class CustomMatchSerializer(serializers.HyperlinkedModelSerializer):
+    """ JSON serializer for match
+
+    Arguments:
+        serializers.HyperlinkedModelSerializer
+    """ 
+    dater = CustomDaterSerializer()
+    matched_with = CustomDaterSerializer()
+    class Meta:
+        model = Match
+        url = serializers.HyperlinkedIdentityField(
+            view_name='match',
+            lookup_field='id',
+        )
+        fields = ('id', 'dater', 'matched_with', 'url')
+        depth = 2
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
     """ JSON serializer for match
@@ -10,14 +62,15 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
     Arguments:
         serializers.HyperlinkedModelSerializer
     """ 
+    match = CustomMatchSerializer()
     class Meta:
         model = Message
         url = serializers.HyperlinkedIdentityField(
             view_name='message',
             lookup_field='id',
         )
-        fields = ('id', 'message_body', 'time_sent', 'logged_in_user_id', 'match_id', 'match')
-        depth = 2
+        fields = ('id', 'url', 'message_body', 'time_sent', 'logged_in_user_id', 'match_id', 'match')
+        depth = 3
 
 class Messages(ViewSet):
     def retrieve(self, request, pk=None):

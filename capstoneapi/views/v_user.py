@@ -12,12 +12,12 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         serializers.HyperlinkedModelSerializer
     """
 
-class Meta:
-    model = User
-    url = serializers.HyperlinkedIdentityField(
-        view_name='user',
-        lookup_field='id'
-    )
+    class Meta:
+        model = User
+        url = serializers.HyperlinkedIdentityField(
+            view_name='user',
+            lookup_field='id'
+        )
     
     fields = ('id', 'username','first_name', 'last_name', 'email')
 
